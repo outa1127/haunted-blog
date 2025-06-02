@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class BlogsController < ApplicationController
+  skip_before_action :authenticate_user!, only: %i[index show]
+
   before_action :set_blog, only: %i[edit update destroy]
 
   def index
@@ -9,6 +11,8 @@ class BlogsController < ApplicationController
 
   def show
     @blog = Blog.find(params[:id])
+
+    raise ActiveRecord::RecordNotFound if @blog.secret && @blog.user != current_user
   end
 
   def new
