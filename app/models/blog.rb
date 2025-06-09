@@ -15,6 +15,14 @@ class Blog < ApplicationRecord
 
   scope :default_order, -> { order(id: :desc) }
 
+  scope :viewable_by, lambda { |login_user|
+    if login_user
+      published.or(where(user: login_user))
+    else
+      published
+    end
+  }
+
   def owned_by?(target_user)
     user == target_user
   end
